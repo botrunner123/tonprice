@@ -11,30 +11,27 @@ class TONPriceBot:
         self.bot = Bot(token=bot_token)
         self.channel_id = channel_id
         
-    def get_ton_price(self) -> float:
-        """Fetch TON price from alternative APIs"""
-        
-        # Option 1: Binance API
-        try:
-            url = "https://api.binance.com/api/v3/ticker/price"
-            params = {'symbol': 'TONUSDT'}
-            response = requests.get(url, params=params, timeout=5)
-            data = response.json()
-            return float(data['price'])
-        except:
-            pass
-        
-        # Option 2: CoinGecko API (fallback)
-        try:
-            url = "https://api.coingecko.com/api/v3/simple/price"
-            params = {'ids': 'the-open-network', 'vs_currencies': 'usd'}
-            response = requests.get(url, params=params, timeout=5)
-            data = response.json()
-            return data['the-open-network']['usd']
-        except:
-            pass
-        
-        return None
+    def get_ton_price(self):
+    try:
+        url = "https://api.binance.com/api/v3/ticker/price"
+        r = requests.get(url, params={"symbol": "TONUSDT"}, timeout=5)
+        if r.status_code == 200:
+            return float(r.json()["price"])
+    except Exception as e:
+        logger.error(f"Binance error: {e}")
+
+    try:
+        url = "https://api.coingecko.com/api/v3/simple/price"
+        r = requests.get(url, params={
+            "ids": "the-open-network",
+            "vs_currencies": "usd"
+        }, timeout=5)
+        if r.status_code == 200:
+            return r.json()["the-open-network"]["usd"]
+    except Exception as e:
+        logger.error(f"CoinGecko error: {e}")
+
+    return None
     
     async def send_price_update(self):
         price = self.get_ton_price()
@@ -50,9 +47,8 @@ class TONPriceBot:
             )
             logger.info(f"TON: {formatted_price}")
         else:
-            await self.bot.send_message(
-                chat_id=self.channel_id,
-                text="Error"
+            logger.error("Price fetch failed")
+            return
             )
     
     async def start_bot(self):
