@@ -12,26 +12,26 @@ class TONPriceBot:
         self.channel_id = channel_id
         
     def get_ton_price(self):
-    try:
-        url = "https://api.binance.com/api/v3/ticker/price"
-        r = requests.get(url, params={"symbol": "TONUSDT"}, timeout=5)
-        if r.status_code == 200:
-            return float(r.json()["price"])
-    except Exception as e:
-        logger.error(f"Binance error: {e}")
+        try:
+            url = "https://api.binance.com/api/v3/ticker/price"
+            r = requests.get(url, params={"symbol": "TONUSDT"}, timeout=5)
+            if r.status_code == 200:
+                return float(r.json()["price"])
+        except Exception as e:
+            logger.error(f"Binance error: {e}")
 
-    try:
-        url = "https://api.coingecko.com/api/v3/simple/price"
-        r = requests.get(url, params={
-            "ids": "the-open-network",
-            "vs_currencies": "usd"
-        }, timeout=5)
-        if r.status_code == 200:
-            return r.json()["the-open-network"]["usd"]
-    except Exception as e:
-        logger.error(f"CoinGecko error: {e}")
+        try:
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            r = requests.get(url, params={
+                "ids": "the-open-network",
+                "vs_currencies": "usd"
+            }, timeout=5)
+            if r.status_code == 200:
+                return r.json()["the-open-network"]["usd"]
+        except Exception as e:
+            logger.error(f"CoinGecko error: {e}")
 
-    return None
+        return None
     
     async def send_price_update(self):
         price = self.get_ton_price()
@@ -49,7 +49,7 @@ class TONPriceBot:
         else:
             logger.error("Price fetch failed")
             return
-            )
+            
     
     async def start_bot(self):
         while True:
