@@ -59,7 +59,7 @@ class TONPriceBot:
         while True:
             try:
                 await self.send_price_update()
-                await asyncio.sleep(5)
+                await asyncio.sleep(10)
             except Exception as e:
                 logger.error(f"Error: {e}")
                 await asyncio.sleep(5)
