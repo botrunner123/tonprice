@@ -12,7 +12,7 @@ class TONPriceBot:
         self.channel_id = channel_id
         
     def get_ton_price(self):
-    
+
         try:
             url = "https://api.bybit.com/v5/market/tickers"
     
@@ -26,8 +26,6 @@ class TONPriceBot:
             )
     
             data = r.json()
-    
-            logger.info(data)
     
             price = float(
                 data["result"]["list"][0]["lastPrice"]
