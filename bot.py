@@ -38,7 +38,7 @@ class TONPriceBot:
         
         if price is not None:
             # Format: always 3 digits after decimal
-            formatted_price = f"{price:.3f}"
+            formatted_price = f"{price:.3f}".rstrip('0').rstrip('.')
             
             # Send as plain text
             await self.bot.send_message(
