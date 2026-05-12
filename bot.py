@@ -13,12 +13,17 @@ class TONPriceBot:
         
     def get_ton_price(self):
         try:
-            url = "https://api.binance.com/api/v3/ticker/price"
-            r = requests.get(url, params={"symbol": "TONUSDT"}, timeout=5)
-            if r.status_code == 200:
-                return float(r.json()["price"])
-        except Exception as e:
-            logger.error(f"Binance error: {e}")
+            url = "https://api.binance.com/api/v3/ticker/bookTicker"
+
+            r = requests.get(
+                url,
+                params={"symbol": "TONUSDT"},
+                timeout=5
+            )
+            
+            data = r.json()
+            
+            price = float(data["bidPrice"])
 
         try:
             url = "https://api.coingecko.com/api/v3/simple/price"
@@ -38,7 +43,7 @@ class TONPriceBot:
         
         if price is not None:
             # Format: always 3 digits after decimal
-            formatted_price = f"{price:.3f}".rstrip('0').rstrip('.')
+            formatted_price = f"{price:.3f}"
             
             # Send as plain text
             await self.bot.send_message(
