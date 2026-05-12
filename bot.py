@@ -55,6 +55,22 @@ class TONPriceBot:
     
         return None
             
+    async def send_price_update(self):
+        price = self.get_ton_price()
+    
+        if price is not None:
+    
+            formatted_price = str(int(price * 1000) / 1000)
+    
+            await self.bot.send_message(
+                chat_id=self.channel_id,
+                text=formatted_price
+            )
+    
+            logger.info(f"TON: {formatted_price}")
+    
+        else:
+            logger.error("Price fetch failed")
     
     async def start_bot(self):
         while True:
