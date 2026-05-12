@@ -12,46 +12,31 @@ class TONPriceBot:
         self.channel_id = channel_id
         
     def get_ton_price(self):
-
-        try:
-            url = "https://api.binance.com/api/v3/ticker/bookTicker"
-    
-            r = requests.get(
-                url,
-                params={"symbol": "TONUSDT"},
-                timeout=5
-            )
-    
-            logger.info(r.text)
-    
-            data = r.json()
-    
-            price = float(data["bidPrice"])
-    
-            return price
-    
-        except Exception as e:
-            logger.error(f"Binance error: {e}")
     
         try:
-            url = "https://api.coingecko.com/api/v3/simple/price"
+            url = "https://api.bybit.com/v5/market/tickers"
     
             r = requests.get(
                 url,
                 params={
-                    "ids": "the-open-network",
-                    "vs_currencies": "usd"
+                    "category": "spot",
+                    "symbol": "TONUSDT"
                 },
                 timeout=5
             )
     
             data = r.json()
     
-            if "the-open-network" in data:
-                return data["the-open-network"]["usd"]
+            logger.info(data)
+    
+            price = float(
+                data["result"]["list"][0]["lastPrice"]
+            )
+    
+            return price
     
         except Exception as e:
-            logger.error(f"CoinGecko error: {e}")
+            logger.error(f"Bybit error: {e}")
     
         return None
             
