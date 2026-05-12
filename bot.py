@@ -12,48 +12,48 @@ class TONPriceBot:
         self.channel_id = channel_id
         
     def get_ton_price(self):
+
         try:
             url = "https://api.binance.com/api/v3/ticker/bookTicker"
-
+    
             r = requests.get(
                 url,
                 params={"symbol": "TONUSDT"},
                 timeout=5
             )
-            
+    
+            logger.info(r.text)
+    
             data = r.json()
-            
+    
             price = float(data["bidPrice"])
-
+    
+            return price
+    
+        except Exception as e:
+            logger.error(f"Binance error: {e}")
+    
         try:
             url = "https://api.coingecko.com/api/v3/simple/price"
-            r = requests.get(url, params={
-                "ids": "the-open-network",
-                "vs_currencies": "usd"
-            }, timeout=5)
-            if r.status_code == 200:
-                return r.json()["the-open-network"]["usd"]
+    
+            r = requests.get(
+                url,
+                params={
+                    "ids": "the-open-network",
+                    "vs_currencies": "usd"
+                },
+                timeout=5
+            )
+    
+            data = r.json()
+    
+            if "the-open-network" in data:
+                return data["the-open-network"]["usd"]
+    
         except Exception as e:
             logger.error(f"CoinGecko error: {e}")
-
-        return None
     
-    async def send_price_update(self):
-        price = self.get_ton_price()
-        
-        if price is not None:
-            # Format: always 3 digits after decimal
-            formatted_price = f"{price:.3f}"
-            
-            # Send as plain text
-            await self.bot.send_message(
-                chat_id=self.channel_id,
-                text=formatted_price
-            )
-            logger.info(f"TON: {formatted_price}")
-        else:
-            logger.error("Price fetch failed")
-            return
+        return None
             
     
     async def start_bot(self):
